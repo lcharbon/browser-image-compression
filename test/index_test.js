@@ -61,6 +61,18 @@ describe('Tests', function () {
     expect(compressedFile.size).to.be.at.most(maxSizeByte);
   });
 
+  it('compress image file', async () => {
+    const file = new File(PNG_PATH);
+
+    const maxSizeMB = 0.1;
+    const targetFormat = 'image/jpeg';
+    const maxSizeByte = maxSizeMB * 1024 * 1024;
+
+    const compressedFile = await imageCompression(file, maxSizeByte, undefined, targetFormat);
+
+    expect(compressedFile.type).to.equal(targetFormat);
+  });
+
   afterEach(() => {
     cleanUpJsDom();
   });
