@@ -5,10 +5,13 @@ import { File, FileReader } from 'file-api';
 import imageCompression, { drawImageInCanvas, getDataUrlFromFile, getFilefromDataUrl, loadImage } from '../';
 
 const IMAGE_DIR = './example';
+const FLIPED_NAME = "dinner.jpg";
+const FLIPED_PATH = path.join(IMAGE_DIR, FLIPED_NAME);
 const JPG_NAME = '178440.jpg';
 const JPG_PATH = path.join(IMAGE_DIR, JPG_NAME);
 const PNG_NAME = 'sonic.png';
 const PNG_PATH = path.join(IMAGE_DIR, PNG_NAME);
+
 const base64String = 'data:image/jpeg;base64,' + new Buffer(fs.readFileSync(JPG_PATH)).toString('base64');
 // const base64String2 = 'data:image/png;base64,' + new Buffer(fs.readFileSync(PNG_PATH)).toString('base64');
 
@@ -71,6 +74,17 @@ describe('Tests', function () {
     const compressedFile = await imageCompression(file, maxSizeByte, undefined, targetFormat);
 
     expect(compressedFile.type).to.equal(targetFormat);
+  });
+
+  it('rotates image based on exif data', async () => {
+    const file = new File(FLIPED_PATH);
+
+    const compressedFile = await imageCompression(file);
+    const imgURL = await getDataUrlFromFile(compressedFile);
+    const imgElement = await loadImage(imgURL);
+
+    expect(imgElement.width).to.equal(540);
+    expect(imgElement.height).to.equal(720);
   });
 
   afterEach(() => {
